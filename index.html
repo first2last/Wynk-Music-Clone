@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wynk Music Clone</title>
+    <link href="./dist/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .song-container {
+            position: relative;
+        }
+
+        .play-icon {
+            transition: opacity 0.3s ease;
+        }
+
+        .song-container:hover .play-icon {
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        .song-container:hover img {
+            filter: brightness(50%);
+        }
+
+        .audio-player {
+            display: none;
+            /* Ensures the audio player is never visible */
+        }
+
+        /* Mini Player Styling */
+        .mini-player {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #222;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .mini-player.hidden {
+            display: none;
+        }
+
+        .player-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+
+        .song-progress {
+            width: 150px;
+            margin: 0 10px;
+        }
+
+        .play-pause-btn {
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        .close-player {
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        .mini-player.show {
+            display: flex;
+        }
+    </style>
+
+
+</head>
+
+<body class="bg-black  text-white">
+
+
+
+
+    <!--nav bar-->
+    <section class="bg-gray-900 w-full h-16 flex items-center justify-between px-4">
+        <!-- Flex and justify-between for equal spacing -->
+
+        <div
+            class="nav-title flex items-center pl-4 md:pl-10 transform transition-transform duration-300 hover:scale-110">
+            <!-- Flex for logo and title alignment -->
+            <div class="logo pl-2 pr-2">
+                <img class="w-8 h-8 md:w-10 md:h-10" src="logo.png" alt="Wynk Music Logo">
+            </div>
+            <div class="title text-sm md:text-lg text-white">
+                Wynk Music
+            </div>
+        </div>
+
+        <div class="right-nav flex items-center space-x-4 md:space-x-6">
+            <!-- Added space-x-6 to control spacing between elements -->
+
+            <!-- Search input hidden on small screens -->
+            <div class="search flex items-center border rounded-xl  sm:flex">
+                <div class="search-logo mr-2 pl-2">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <input type="text" placeholder="Search Songs" class="pl-4 py-1 bg-transparent w-24 md:w-40 lg:w-64">
+            </div>
+
+            <!-- Manage Subscription and Login Text -->
+            <div class="subs flex items-center text-white  sm:flex">
+                <div class="subs-logo pr-3">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                </div>
+                <div class="subs-text text-xs md:text-base">
+                    Manage Subscription
+                </div>
+
+                <!-- Divider -->
+                <div class="divider px-4 md:px-6 text-xl text-gray-500">
+                    |
+                </div>
+
+                <!-- Login Section -->
+                <div class="login-icon pr-2 md:pr-3">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+                <div class="login-text pl-2 text-xs md:text-base">
+                    Login
+                </div>
+            </div>
+
+            <!-- Hamburger Menu visible on small screens -->
+            <div class="subs-nav pl-3 pr-3 md:pr-10 flex sm:hidden text-white">
+                <i class="fa-solid fa-bars text-lg"></i>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!--header bottom text div-->
+    <div class="header-bottom w-full">
+        <div
+            class="flex overflow-x-auto mt-3 gap-4 md:gap-8 lg:gap-6 xl:gap-8 items-center justify-start pr-4 w-full scrollbar-hide">
+            <!-- Menu item -->
+            <div
+                class="text-sm md:text-base text-gray-800 font-light hover:underline underline-offset-[6px] flex-1 text-center">
+                <a title="All" href="" class="font-light text-gray-500 hover:text-blue-400">All</a>
+            </div>
+            <div
+                class="text-sm md:text-base text-gray-800 font-light hover:underline underline-offset-[6px] flex-1 text-center">
+                <a title="Trending Now" href="" class="font-light text-gray-500 hover:text-blue-400">Trending Now</a>
+            </div>
+            <div
+                class="text-sm md:text-base text-gray-800 font-light hover:underline underline-offset-[6px] flex-1 text-center">
+                <a title="Old Songs" href="" class="font-light text-gray-500 hover:text-blue-400">Old Songs</a>
+            </div>
+            <div
+                class="text-sm md:text-base text-gray-800 font-light hover:underline underline-offset-[6px] flex-1 text-center">
+                <a title="New Songs" href="" class="font-light text-gray-500 hover:text-blue-400">New Songs</a>
+            </div>
+            <div
+                class="text-sm md:text-base text-gray-800 font-light hover:underline underline-offset-[6px] flex-1 text-center">
+                <a title="Moods" href="" class="font-light text-gray-500 hover:text-blue-400">Moods
+                    <i class="fa-solid fa-caret-down"></i>
+                </a>
+            </div>
+            <div
+                class="text-sm md:text-base text-gray-800 font-light hover:underline underline-offset-[6px] flex-1 text-center">
+                <a title="Top Albums" href="" class="font-light text-gray-500 hover:text-blue-400">Top Albums
+                    <i class="fa-solid fa-caret-down"></i>
+                </a>
+            </div>
+            <div
+                class="text-sm md:text-base text-gray-800 font-light hover:underline underline-offset-[6px] flex-1 text-center">
+                <a title="Top Artists" href="" class="font-light text-gray-500 hover:text-blue-400">Top Artists
+                    <i class="fa-solid fa-caret-down"></i>
+                </a>
+            </div>
+            <div
+                class="text-sm md:text-base text-gray-800 font-light hover:underline underline-offset-[6px] flex-1 text-center">
+                <a title="Top Playlists" href="" class="font-light text-gray-500 hover:text-blue-400">Top Playlists
+                    <i class="fa-solid fa-caret-down"></i>
+                </a>
+            </div>
+            <div
+                class="text-sm md:text-base text-gray-800 font-light hover:underline underline-offset-[6px] flex-1 text-center">
+                <a title="Podcasts" href="" class="font-light text-gray-500 hover:text-blue-400">Podcasts</a>
+            </div>
+        </div>
+    </div>
+
+    <!--corousel-->
+    <section class="relative mt-0 mb-0 pl-0 pr-0 w-full h-[450px] overflow-hidden mx-auto">
+        <!-- Removed margins and padding -->
+        <!-- Carousel Wrapper with loop -->
+        <div id="carousel-container"
+            class="carousel flex transition-transform duration-700 ease-in-out w-[150%] h-full items-center">
+            <!-- Individual carousel items -->
+            <div class="carousel-item flex-shrink-0 w-[900px] h-[370px] mx-3 transform scale-90 opacity-60">
+                <!-- Increased width and height -->
+                <img src="https://img.wynk.in/unsafe/880x307/filters:no_upscale():strip_exif():format(webp)/https://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/665ea83c7d9a317533abb128/BANNER_955635934605.png"
+                    alt="Slide 1" class="rounded-2xl w-full h-full object-cover">
+            </div>
+            <div class="carousel-item flex-shrink-0 w-[900px] mx-3 h-[370px] transform scale-100 opacity-100">
+                <!-- Increased width and height -->
+                <img src="https://img.wynk.in/unsafe/880x307/filters:no_upscale():strip_exif():format(webp)/https://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/tile/artwork/1723456095203_bollywood-love-cafe-1440x502_(2).png"
+                    alt="Slide 2" class="rounded-2xl w-full h-full object-cover">
+            </div>
+            <div class="carousel-item flex-shrink-0 w-[900px] mx-3 h-[370px] transform scale-90 opacity-60">
+                <!-- Increased width and height -->
+                <img src="https://img.wynk.in/unsafe/880x307/filters:no_upscale():strip_exif():format(webp)/https://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66bb5068dd4c63296eb47813/BANNER_419045940747783.jpg"
+                    alt="Slide 3" class="rounded-2xl w-full h-full object-cover">
+            </div>
+
+            <div class="carousel-item flex-shrink-0 w-[900px] mx-3 h-[370px] transform scale-90 opacity-60">
+                <!-- Increased width and height -->
+                <img src="https://img.wynk.in/unsafe/880x307/filters:no_upscale():strip_exif():format(webp)/https://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66b20e197c9cbd1bbf5111ad/BANNER_32915864784809.png"
+                    alt="Slide 4" class="rounded-2xl w-full h-full object-cover">
+            </div>
+
+            <div class="carousel-item flex-shrink-0 w-[900px] mx-3 h-[370px] transform scale-90 opacity-60">
+                <img src="https://img.wynk.in/unsafe/880x307/filters:no_upscale():strip_exif():format(webp)/https://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66698b2349a92c2cf5e63207/BANNER_97008108098601.jpg"
+                    alt="Slide 5" class="rounded-2xl w-full h-full object-cover">
+            </div>
+
+            <div class="carousel-item flex-shrink-0 w-[900px] mx-3 h-[370px] transform scale-90 opacity-60">
+                <img src="https://img.wynk.in/unsafe/880x307/filters:no_upscale():strip_exif():format(webp)/https://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66c84dcecbba4e437df020b2/BANNER_20798457684109.jpg"
+                    alt="Slide 6" class="rounded-2xl w-full h-full object-cover">
+            </div>
+
+
+        </div>
+
+        <!-- Navigation Arrows -->
+        <button id="prev" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 p-3 rounded-full">
+            <i class="fas fa-chevron-left text-white"></i>
+        </button>
+        <button id="next" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 p-3 rounded-full">
+            <i class="fas fa-chevron-right text-white"></i>
+        </button>
+    </section>
+
+    <script>
+        const carouselContainer = document.getElementById('carousel-container');
+        const nextButton = document.getElementById('next');
+        const prevButton = document.getElementById('prev');
+        const items = document.querySelectorAll('.carousel-item');
+        let currentIndex = 1;  // Start with the second item (center item)
+
+        function updateCarousel() {
+            items.forEach((item, index) => {
+                item.classList.remove('scale-100', 'opacity-100', 'scale-90', 'opacity-60');
+                if (index === currentIndex) {
+                    item.classList.add('scale-100', 'opacity-100'); // Center item, fully visible
+                } else {
+                    item.classList.add('scale-90', 'opacity-60');  // Side items, partially visible
+                }
+            });
+            carouselContainer.style.transform = `translateX(-${(currentIndex - 1) * 920}px)`;  // Adjust based on new image width (400px + margin)
+        }
+
+        nextButton.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % items.length;
+            updateCarousel();
+        });
+
+        prevButton.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            updateCarousel();
+        });
+
+        // Auto-play
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % items.length;
+            updateCarousel();
+        }, 3000);  // Change every 3 seconds
+    </script>
+
+    <!--row0-->
+    <div class="px-4 md:px-8 xl:px-24 sm:mt-8 mt-4 text-black dark:text-white">
+        <!-- Heading -->
+        <div class="flex justify-between items-center mb-4"> <!-- Added margin-bottom for spacing -->
+            <div class="text-lg font-bold">New Releases</div> <!-- Added font size and weight -->
+            <div class="text-red-600 cursor-pointer pr-2">More</div> <!-- Added styling for "More" link -->
+        </div>
+
+        <!-- Image Row -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1"> <!-- Grid layout with gap -->
+            <div class="img1 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://img-dynamic.wynk.in/unsafe/top/filters:watermark(https://discovery-prod-arsenal.s3.ap-south-1.amazonaws.com/arsenal/library/new_songs_mix_1/var4/v4/new_songs_mix_1.png,0,-0,0,100,100)/https://s3.ap-south-1.amazonaws.com/wynk-music-cms/srch_wmg/20240817083250113/5021732420862/1723885243454/resources/5021732420862.jpg?dynamic=true"
+                    alt="img1" class="w-full h-auto rounded-md">
+                <div class="img1-caption text-center mt-2">New Songs Mix</div> <!-- Centered caption with margin -->
+            </div>
+
+            <div class="img2 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66cc3be3049a4420b939ad83/COLLECTION_65003721748529.png"
+                    alt="img2" class="w-full h-auto rounded-md">
+                <div class="img2-caption text-center mt-2">New Hindi Songs</div>
+            </div>
+
+            <div class="img3 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66c8599b4cd4de4d043e4e5f/COLLECTION_112228919287267.png"
+                    alt="img3" class="w-full h-auto rounded-md">
+                <div class="img-caption3 text-center mt-2">New English Songs</div>
+            </div>
+
+            <div class="img4 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/wynk-music-cms/srch_saregama/20240819111043000/8907212018373/1724055321041/resources/8907212018373.jpg"
+                    alt="img4" class="w-full h-auto rounded-md">
+                <div class="img4-caption text-center mt-2">Stree 2</div>
+            </div>
+
+            <div class="img5 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/wynk-music-cms/srch_universalmusic/00602465891379_20240822112644251/1724327403985/24UMGIM61704_T1_cvrart.jpg"
+                    alt="img5" class="w-full h-auto rounded-md">
+                <div class="img5-caption text-center mt-2">Short n' Sweet</div>
+            </div>
+
+            <div class="img6 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/wynk-music-cms/srch_universalmusic/00602465638707_20240517010339240/1715912408377/24UMGIM36186_T1_cvrart.jpg"
+                    alt="img6" class="w-full h-auto rounded-md">
+                <div class="img6-caption text-center mt-2">Hit Me Hard</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--row1-->
+    <div class="px-4 md:px-8 xl:px-24 sm:mt-8 mt-4 text-black dark:text-white">
+        <!-- Heading -->
+        <div class="flex justify-between items-center mb-4"> <!-- Added margin-bottom for spacing -->
+            <div class="text-lg font-bold">Top Charts</div> <!-- Added font size and weight -->
+            <div class="text-red-600 cursor-pointer pr-2">More</div> <!-- Added styling for "More" link -->
+        </div>
+
+        <!-- Image Row -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1"> <!-- Grid layout with gap -->
+            <div class="img1 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66bda2760a980313687d86d9/COLLECTION_147999015691783.png"
+                    alt="img1" class="w-full h-auto rounded-md">
+                <div class="img1-caption text-center mt-2">Weekly Top 20</div> <!-- Centered caption with margin -->
+            </div>
+
+            <div class="img2 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110 ">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66c58ef2e6b4673d48f45345/COLLECTION_618245944549301.png"
+                    alt="img2" class="w-full h-auto rounded-md">
+                <div class="img2-caption text-center mt-2">Wynk Top 100</div>
+            </div>
+
+            <div class="img3 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/65ae64053c0587731bbb2cc2/COLLECTION_33857135845222.png"
+                    alt="img3" class="w-full h-auto rounded-md">
+                <div class="img-caption3 text-center mt-2">Romance Top 20</div>
+            </div>
+
+            <div class="img4 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66c9ec2a15bc0c2dbe1576e8/COLLECTION_87289928012362.png"
+                    alt="img4" class="w-full h-auto rounded-md">
+                <div class="img4-caption text-center mt-2">Weekly Top 20</div>
+            </div>
+
+            <div class="img5 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66c832ae5a97e958d9cab23e/COLLECTION_72701228479778.png"
+                    alt="img5" class="w-full h-auto rounded-md">
+                <div class="img5-caption text-center mt-2">Romance Top 50</div>
+            </div>
+
+            <div class="img6 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/65a6bc638439b656247058ac/COLLECTION_50147806268119.png"
+                    alt="img6" class="w-full h-auto rounded-md">
+                <div class="img6-caption text-center mt-2">Pop Top 20</div>
+            </div>
+        </div>
+    </div>
+
+    <!--row2-->
+    <div class="px-4 md:px-8 xl:px-24 sm:mt-8 mt-4 text-black dark:text-white">
+        <!-- Heading -->
+        <div class="flex justify-between items-center mb-4"> <!-- Added margin-bottom for spacing -->
+            <div class="text-lg font-bold">Indie Music</div> <!-- Added font size and weight -->
+            <div class="text-red-600 cursor-pointer pr-2">More</div> <!-- Added styling for "More" link -->
+        </div>
+
+        <!-- Image Row -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1"> <!-- Grid layout with gap -->
+            <div class="img1 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66c86f695cb1cc5e99e48de5/COLLECTION_2060384896576.png"
+                    alt="img1" class="w-full h-auto rounded-md">
+                <div class="img1-caption text-center mt-2">Latest Indie</div> <!-- Centered caption with margin -->
+            </div>
+
+            <div class="img2 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110 ">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66c707381e2754321051326e/COLLECTION_28072543939907.png"
+                    alt="img2" class="w-full h-auto rounded-md">
+                <div class="img2-caption text-center mt-2">Indie English</div>
+            </div>
+
+            <div class="img3 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/668560acc2a3b85aa0b6b599/COLLECTION_6638865239407.png"
+                    alt="img3" class="w-full h-auto rounded-md">
+                <div class="img-caption3 text-center mt-2">Beyond Bollywood</div>
+            </div>
+
+            <div class="img4 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/65a91a8c198d706e317860b8/COLLECTION_172242987693001.png"
+                    alt="img4" class="w-full h-auto rounded-md">
+                <div class="img4-caption text-center mt-2">North East Indie</div>
+            </div>
+
+            <div class="img5 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/66c44d5ac9a62d31b9e79f89/COLLECTION_21371455927454.png"
+                    alt="img5" class="w-full h-auto rounded-md">
+                <div class="img5-caption text-center mt-2">Soul Indie</div>
+            </div>
+
+            <div class="img6 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/6666af959dba9258070225f2/COLLECTION_448932961242112.png"
+                    alt="img6" class="w-full h-auto rounded-md">
+                <div class="img6-caption text-center mt-2">Hip Hop Indie</div>
+            </div>
+        </div>
+    </div>
+
+    <!--row3-->
+    <div class="px-4 md:px-8 xl:px-24 sm:mt-8 mt-4 text-black dark:text-white">
+        <!-- Heading -->
+        <div class="flex justify-between items-center mb-4"> <!-- Added margin-bottom for spacing -->
+            <div class="text-lg font-bold">Top Indie Artists</div> <!-- Added font size and weight -->
+            <div class="text-red-600 cursor-pointer pr-2">More</div> <!-- Added styling for "More" link -->
+        </div>
+
+        <!-- Image Row -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1"> <!-- Grid layout with gap -->
+            <div class="img1 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-zion/zion/1673244784213-Prateek_Kuhad.jpg"
+                    alt="img1" class="w-full h-auto rounded-full">
+                <div class="img1-caption text-center mt-2">Prateek Kuhad</div> <!-- Centered caption with margin -->
+            </div>
+
+            <div class="img2 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110 ">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3-ap-south-1.amazonaws.com/wynk-music-cms/music/artists/profile/TLT%20Black.jpg"
+                    alt="img2" class="w-full h-auto rounded-full">
+                <div class="img2-caption text-center mt-2">The Local Train</div>
+            </div>
+
+            <div class="img3 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-zion/zion/1696453099940-Nikhita_Gandhi.png"
+                    alt="img3" class="w-full h-auto rounded-full">
+                <div class="img-caption3 text-center mt-2">Nikita Gandhi</div>
+            </div>
+
+            <div class="img4 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3-ap-south-1.amazonaws.com/wynk-music-cms/srch_wyndie/c64ec93b-9bbf-4182-ae34-25ebf99e044b/1721297730300/file-1721297730022-222561751-IMG-8093.png"
+                    alt="img4" class="w-full h-auto rounded-full">
+                <div class="img4-caption text-center mt-2">Prateek Gandhi</div>
+            </div>
+
+            <div class="img5 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3-ap-south-1.amazonaws.com/wynk-music-cms/music/artists/profile/5ed7758f7c0c58409e2c4317.png"
+                    alt="img5" class="w-full h-auto rounded-full">
+                <div class="img5-caption text-center mt-2">Ritviz</div>
+            </div>
+
+            <div class="img6 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3-ap-south-1.amazonaws.com/wynk-music-cms/music/artists/profile/5f58bf247c0c585d96ebbd0d.png"
+                    alt="img6" class="w-full h-auto rounded-full">
+                <div class="img6-caption text-center mt-2">When Chai Met Toast</div>
+            </div>
+        </div>
+    </div>
+
+    <!--row4-->
+    <div class="px-4 md:px-8 xl:px-24 sm:mt-8 mt-4 text-black dark:text-white">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-lg font-bold">International Top Hits</div>
+            <div class="text-red-600 cursor-pointer pr-2">More</div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1">
+            <!-- First Image and Hover Play Button -->
+            <div class="song-container relative h-3/4 w-3/4">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/wynk-music-cms/srch_universalmusic/00602465590111_20240412074303555/1712910008040/24UMGIM32304_T1_cvrart.jpg"
+                    alt="Espresso" class="w-full h-auto rounded-md">
+                <div class="play-icon absolute inset-0 flex justify-center items-center opacity-0">
+                    <i class="fas fa-play fa-3x text-white"></i>
+                </div>
+                <audio class="audio-player">
+                    <source src="Sabrina Carpenter - Espresso (Official Audio)_51zjlMhdSTE.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="img-caption text-center mt-2">Espresso</div>
+            </div>
+
+            <!-- Second Image and Hover Play Button -->
+            <div class="song-container relative h-3/4 w-3/4">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/wynk-music-cms/srch_universalmusic/00602468023883_20240707000257597/1720312205860/24UMGIM70977_T1_cvrart.jpg"
+                    alt="Big Dawgs" class="w-full h-auto rounded-md">
+                <div class="play-icon absolute inset-0 flex justify-center items-center opacity-0">
+                    <i class="fas fa-play fa-3x text-white"></i>
+                </div>
+                <audio class="audio-player">
+                    <source
+                        src="Hanumankind – Big Dawgs _ Ft. Kalmi (Official Music Video) _ Def Jam India_hOHKltAiKXQ.mp3"
+                        type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="img-caption text-center mt-2">Big Dawgs</div>
+            </div>
+
+            <!-- Third Image and Hover Play Button -->
+            <div class="song-container relative h-3/4 w-3/4">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/wynk-music-cms/srch_universalmusic/00050087555351_20240724074737321/1721808627325/24UMGIM77986_T1_cvrart.jpg"
+                    alt="Bye Bye Bye" class="w-full h-auto rounded-md">
+                <div class="play-icon absolute inset-0 flex justify-center items-center opacity-0">
+                    <i class="fas fa-play fa-3x text-white"></i>
+                </div>
+                <audio class="audio-player">
+                    <source src="_NSYNC - Bye Bye Bye (Lyrics) (Deadpool 3 Soundtrack)_2ydCvkxuNm4.mp3"
+                        type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="img-caption text-center mt-2">Bye Bye Bye</div>
+            </div>
+
+            <!-- Fourth Image and Hover Play Button -->
+            <div class="song-container relative h-3/4 w-3/4">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3-ap-south-1.amazonaws.com/wynk-music-cms/srch_wmg/music/190295851330/1610078687/srch_wmg_A10302B0003858284M.jpg"
+                    alt="Perfect" class="w-full h-auto rounded-md">
+                <div class="play-icon absolute inset-0 flex justify-center items-center opacity-0">
+                    <i class="fas fa-play fa-3x text-white"></i>
+                </div>
+                <audio class="audio-player">
+                    <source src="Ed Sheeran - Perfect_cNGjD0VG4R8.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="img-caption text-center mt-2">Perfect</div>
+            </div>
+
+            <!-- Fifth Image and Hover Play Button -->
+            <div class="song-container relative h-3/4 w-3/4">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3-ap-south-1.amazonaws.com/wynk-music-cms/srch_universalmusic/music/update/1594327914/srch_universalmusic_00602567332756-USQ4E1703341.jpg"
+                    alt="Love Me Like You Do" class="w-full h-auto rounded-md">
+                <div class="play-icon absolute inset-0 flex justify-center items-center opacity-0">
+                    <i class="fas fa-play fa-3x text-white"></i>
+                </div>
+                <audio class="audio-player">
+                    <source src="Ellie Goulding - Love Me Like You Do (Official Video)_AJtDXIazrMo.mp3"
+                        type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="img-caption text-center mt-2">Love Me Like You Do</div>
+            </div>
+
+            <!-- Sixth Image and Hover Play Button -->
+            <div class="song-container relative h-3/4 w-3/4">
+                <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3-ap-south-1.amazonaws.com/wynk-music-cms/srch_universalmusic/music/update/00602448475596_20220826000727783/1661476851/srch_universalmusic_00602448475596-NGA3B2214021.jpg"
+                    alt="Calm Down" class="w-full h-auto rounded-md">
+                <div class="play-icon absolute inset-0 flex justify-center items-center opacity-0">
+                    <i class="fas fa-play fa-3x text-white"></i>
+                </div>
+                <audio class="audio-player">
+                    <source src="Rema, Selena Gomez - Calm Down (Official Music Video)_WcIcVapfqXw.mp3"
+                        type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="img-caption text-center mt-2">Calm Down</div>
+            </div>
+
+            <!-- Mini Music Player (initially hidden) -->
+            <div id="mini-player"
+                class="mini-player hidden fixed bottom-0 left-0 w-full bg-gray-800 text-white p-4  items-center justify-between">
+                <div class="player-info flex items-center">
+                    <img src="" alt="Song Image" class="player-img w-12 h-12 rounded mr-4">
+                    <div class="player-song-info">
+                        <div class="song-title font-bold"></div>
+                        <div class="song-artist text-sm"></div>
+                    </div>
+                </div>
+                <div class="player-controls flex items-center">
+                    <button class="play-pause-btn">
+                        <i class="fas fa-pause fa-2x"></i>
+                    </button>
+                    <input type="range" class="song-progress" min="0" max="100" value="0">
+                    <button class="close-player ml-4">
+                        <i class="fas fa-times fa-2x"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <script>
+            document.querySelectorAll('.play-icon').forEach(icon => {
+                icon.addEventListener('click', function () {
+                    const audio = this.parentElement.querySelector('.audio-player');
+                    const songTitle = this.parentElement.querySelector('.img-caption').textContent;
+                    const songImg = this.parentElement.querySelector('img').src;
+
+                    // Pause all other audios
+                    document.querySelectorAll('.audio-player').forEach(player => {
+                        if (player !== audio) {
+                            player.pause();
+                            player.currentTime = 0; // Reset audio
+                        }
+                    });
+
+                    // Mini Player Elements
+                    const miniPlayer = document.getElementById('mini-player');
+                    const miniPlayerSongTitle = miniPlayer.querySelector('.song-title');
+                    const miniPlayerSongImg = miniPlayer.querySelector('.player-img');
+                    const playPauseBtn = miniPlayer.querySelector('.play-pause-btn i');
+                    const songProgress = miniPlayer.querySelector('.song-progress');
+
+                    // Display mini player and update song info
+                    miniPlayer.classList.add('show');
+                    miniPlayerSongTitle.textContent = songTitle;
+                    miniPlayerSongImg.src = songImg;
+
+                    // Play or pause the audio
+                    if (audio.paused) {
+                        audio.play();
+                        playPauseBtn.classList.remove('fa-play');
+                        playPauseBtn.classList.add('fa-pause');
+                    } else {
+                        audio.pause();
+                        playPauseBtn.classList.remove('fa-pause');
+                        playPauseBtn.classList.add('fa-play');
+                    }
+
+                    // Update progress bar as the song plays
+                    audio.addEventListener('timeupdate', () => {
+                        const progress = (audio.currentTime / audio.duration) * 100;
+                        songProgress.value = progress;
+                    });
+
+                    // Allow seeking by updating audio time via the progress bar
+                    songProgress.addEventListener('input', () => {
+                        const newTime = (songProgress.value / 100) * audio.duration;
+                        audio.currentTime = newTime;
+                    });
+
+                    // Play/Pause toggle in mini player
+                    miniPlayer.querySelector('.play-pause-btn').addEventListener('click', () => {
+                        if (audio.paused) {
+                            audio.play();
+                            playPauseBtn.classList.remove('fa-play');
+                            playPauseBtn.classList.add('fa-pause');
+                        } else {
+                            audio.pause();
+                            playPauseBtn.classList.remove('fa-pause');
+                            playPauseBtn.classList.add('fa-play');
+                        }
+                    });
+
+                    // Close the mini player
+                    miniPlayer.querySelector('.close-player').addEventListener('click', () => {
+                        miniPlayer.classList.remove('show');
+                        audio.pause();
+                        audio.currentTime = 0; // Reset the audio when closing
+                    });
+                });
+            });
+
+
+
+
+
+        </script>
+
+
+
+
+        <!--row5-->
+        <div class="px-4 md:px-8 xl:px-24 sm:mt-8 mt-4 text-black dark:text-white">
+            <!-- Heading -->
+            <div class="flex justify-between items-center mb-4"> <!-- Added margin-bottom for spacing -->
+                <div class="text-lg font-bold">Your Library</div> <!-- Added font size and weight -->
+                <!-- Added styling for "More" link -->
+            </div>
+
+            <!-- Image Row -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1"> <!-- Grid layout with gap -->
+                <div class="img1 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                    <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/ziegel/recently-played.png"
+                        alt="img1" class="w-full h-auto rounded-md">
+                    <div class="img1-caption text-center mt-2">Recently Played</div>
+                    <!-- Centered caption with margin -->
+                </div>
+
+                <div class="img2 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110 ">
+                    <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/arsenal/artworks/601b98e1d7d9cc1e85aac55c/1723450932467_3.png"
+                        alt="img2" class="w-full h-auto rounded-md">
+                    <div class="img2-caption text-center mt-2">Most Played songs 🔥</div>
+                </div>
+
+                <div class="img3 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                    <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/ziegel/liked-songs.png"
+                        alt="img3" class="w-full h-auto rounded-md">
+                    <div class="img-caption3 text-center mt-2">Liked Songs</div>
+                </div>
+
+                <div class="img4 h-3/4 w-3/4 transform transition-transform duration-300 hover:scale-110">
+                    <img src="https://img.wynk.in/unsafe/220x220/filters:no_upscale():strip_exif():format(webp)/http://s3.ap-south-1.amazonaws.com/discovery-prod-arsenal/ziegel/downloads.png"
+                        alt="img4" class="w-full h-auto rounded-md">
+                    <div class="img4-caption text-center mt-2">Downloads</div>
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <!--wynk box-->
+        <div class="about my-12 mx-4 md:mx-8 xl:mx-24 flex flex-col space-y-5 w-full px-6 py-6 border border-gray-500"
+            style="max-width: 88%; margin-left: auto; margin-right: auto;">
+            <!-- flex-col for vertical stacking and space-y for spacing -->
+
+            <div class="about-p1 mt-4 ml-5 justify-start w-3/4">
+                <h2 class="text-xl font-medium mb-1 dark:text-white text-black">About Wynk Music</h2>
+                <p class="text-gray-400">Wynk Music is a complete package that allows you free online music streaming,
+                    set
+                    <a class="hoverable-link" href="/airtel-hellotunes">caller tunes</a>, listen to podcasts, download
+                    MP3
+                    music offline, and much more! Since music is essentially the only thing that can truly understand a
+                    person, we consistently offer our audience the ideal blend of MP3 Songs by their favourite artists
+                    and
+                    of versatile genres.
+                </p>
+            </div>
+
+            <div class="about-p2 w-3/4 justify-start ml-5">
+                <h2 class="text-xl font-medium mb-1 dark:text-white text-black">Play &amp; Download FREE MP3 Songs in
+                    all
+                    languages</h2>
+                <p class="text-gray-400">One of the unique features of Wynk Music is that it offers users the ability to
+                    stream music in multiple
+                    regional languages, including Hindi, Punjabi, Bengali, Tamil, Telugu, and more. Also, users of the
+                    app
+                    can download MP3 songs for offline listening. This online music platform provides access to
+                    additional
+                    features such as offline listening, high-quality audio, and exclusive content.</p>
+            </div>
+
+            <div class="about-p3 w-3/4 justify-start ml-5">
+                <h2 class="text-xl font-medium mb-1 dark:text-white text-black">Wynk Music – One Stop Destination for
+                    Offline &amp; Online Music!</h2>
+                <p class="text-gray-400">Music offers users access to a vast library of music, including Indian and
+                    international tracks
+                    across various genres like Bollywood, Punjabi, pop, rock, and more. We have made online music
+                    streaming
+                    simple, fun, and all about you! So, what’s the wait for, discover and listen to millions of songs,
+                    playlists, podcasts & download MP3 songs on any device including mobile for free exclusively on Wynk
+                    Music. Keep Wynking!</p>
+            </div>
+        </div>
+
+
+        <!--footer above play-apple-->
+        <div
+            class="footer-top my-12 mx-4 md:mx-8 xl:mx-24 text-wynk-static-black-title dark:bg-black-secondary bg-gray-600   rounded px-6 py-6 md:flex md:items-center md:justify-between">
+
+            <div class="left md:flex md:items-center">
+                <div class="logo h-11 w-11 mr-4 transform transition-transform duration-300 hover:scale-110">
+                    <img src="logo.png" alt="logo">
+                </div>
+                <div class="text">
+                    <h3 class="text-xl font-medium text-black dark:text-white">Best way to Listen to Music!</h3>
+                    <p class="text-sm mt-1 text-black dark:text-white">Don’t forget to install Wynk Music on your mobile
+                        phones</p>
+                </div>
+            </div>
+
+            <div class="right">
+                <div class="Play-store transform transition-transform duration-300 hover:scale-110">
+                    <img src="https://wynk.in/_next/static/media/play-store.28ce99c9.png" alt="play">
+                </div>
+                <div class="apple transform transition-transform duration-300 hover:scale-110">
+                    <img src="https://wynk.in/_next/static/media/apple-store.fd317c9d.png" alt="apple">
+                </div>
+            </div>
+
+        </div>
+
+        <!--footer songs-->
+        <div
+            class="footer-mid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 my-12 mx-4 md:mx-8 xl:mx-24 px-6 py-6 ">
+            <div class="text hover:underline">
+                <h3 class="text-lg font-bold mb-2">LATEST ALBUMS</h3>
+                <p class="text-xs text-gray-500">
+                    Short n' Sweet <span class="px-2">|</span> Stree 2 <span class="px-2">|</span> Thallumaala <span
+                        class="px-2">|</span> Pushpa - The Rise <span class="px-2">|</span> Ninna Sanihake <span
+                        class="px-2">|</span> Praktan <span class="px-2">|</span> Making Memories <span
+                        class="px-2">|</span> Bhavartha Mauli <span class="px-2">|</span> Yuva Sarkar <span
+                        class="px-2">|</span> Mal mahu jiban mati <span class="px-2">|</span> HIT ME HARD AND SOFT
+                </p>
+            </div>
+
+            <div class="text hover:underline">
+                <h3 class="text-lg font-bold mb-2">EXPLORE VARIOUS MUSIC GENRES</h3>
+                <p class="text-xs text-gray-500">
+                    Rock Songs <span class="px-2">|</span> Patriotic Songs <span class="px-2">|</span> Sufi Music <span
+                        class="px-2">|</span> Ghazals <span class="px-2">|</span> Workout Music <span
+                        class="px-2">|</span>
+                    Devotional Music <span class="px-2">|</span> Sad Songs <span class="px-2">|</span> DJ Songs
+                </p>
+            </div>
+
+            <div class="text hover:underline">
+                <h3 class="text-lg font-bold mb-2">OLD SONGS</h3>
+                <p class="text-xs text-gray-500">
+                    Old songs <span class="px-2">|</span> Old Hindi Songs <span class="px-2">|</span> Old Punjabi Songs
+                    <span class="px-2">|</span> Old Telugu Songs <span class="px-2">|</span> Old Tamil Songs <span
+                        class="px-2">|</span> Old Bengali Songs <span class="px-2">|</span> Old Malyalam Songs <span
+                        class="px-2">|</span> Old Kannada Songs
+                </p>
+            </div>
+
+            <div class="text hover:underline">
+                <h3 class="text-lg font-bold mb-2">TOP ARTISTS</h3>
+                <p class="text-xs text-gray-500">
+                    Guru Randhawa <span class="px-2">|</span> Arijit Singh <span class="px-2">|</span> Atif Aslam <span
+                        class="px-2">|</span> Justin Beiber <span class="px-2">|</span> Gulzar <span
+                        class="px-2">|</span>
+                    Arman Malik <span class="px-2">|</span> Sidhu Moose Wala <span class="px-2">|</span> Alan Walker
+                    <span class="px-2">|</span> Udit Narayan <span class="px-2">|</span> Sonu Nigam <span
+                        class="px-2">|</span> Ed Sheeran <span class="px-2">|</span> Akhil <span class="px-2">|</span>
+                    Satinder Saaj <span class="px-2">|</span> Darshan Raval <span class="px-2">|</span> Shreya Goshal
+                    <span class="px-2">|</span> Alka Yagnik
+                </p>
+            </div>
+
+            <div class="text hover:underline">
+                <h3 class="text-lg font-bold mb-2">REGIONAL PLAYLISTS</h3>
+                <p class="text-xs text-gray-500">
+                    New Bengali Songs <span class="px-2">|</span> New Bhojpuri Songs <span class="px-2">|</span> New
+                    English
+                    Songs <span class="px-2">|</span> Latest Haryanvi Songs <span class="px-2">|</span> New Hindi Songs
+                    <span class="px-2">|</span> New Kannada Songs <span class="px-2">|</span> New Marathi Songs <span
+                        class="px-2">|</span> New Tamil Songs <span class="px-2">|</span> New Telugu Songs <span
+                        class="px-2">|</span> Latest Pubjabi Songs <span class="px-2">|</span> New Rajasthani Songs
+                    <span class="px-2">|</span> New Gujarati Songs <span class="px-2">|</span> New Assamese Songs
+                </p>
+            </div>
+
+            <div class="text hover:underline">
+                <h3 class="text-lg font-bold mb-2">LATEST SONGS</h3>
+                <p class="text-xs text-gray-500">
+                    Zaroorat Se Zyada <span class="px-2">|</span> Khoobsurat (From "Stree 2") <span
+                        class="px-2">|</span>
+                    Aisi Jagah Le Ja <span class="px-2">|</span> Chal Ve Dilaa (From "Khel Khel Mein") <span
+                        class="px-2">|</span> Durr Na Karin (From "Khel Khel Mein") <span class="px-2">|</span> Jee Loon
+                    Main Tujhko <span class="px-2">|</span> Do U Know (From "Khel Khel Mein") <span
+                        class="px-2">|</span>
+                    Tumhare Hi Rhenge Hum (From "Stree 2") <span class="px-2">|</span> Dheere Dheere (From "Deveara Part
+                    1")
+                    <span class="px-2">|</span> Kya haal Hai (From "Phir Aayi Haseen Dilruba") <span
+                        class="px-2">|</span>
+                    Mummy Ji <span class="px-2">|</span> Dhola <span class="px-2">|</span> Aayi Nai (From "Stree 2")
+                    <span class="px-2">|</span> Dil Vasda (From "Ghudchadi")
+                </p>
+            </div>
+
+            <div class="text hover:underline">
+                <h3 class="text-lg font-bold mb-2">TRENDING SONGS</h3>
+                <p class="text-xs text-gray-500">
+                    Dil Tu Jaan Tu <span class="px-2">|</span> Chuttamalle (From "Devara Part 1") <span
+                        class="px-2">|</span> Aaj Ki Raat (From "Stree 2") <span class="px-2">|</span> Tauba Tauba (From
+                    "Bad Newz") <span class="px-2">|</span> Zaroorat Se Zyada <span class="px-2">|</span> Sajni (From
+                    "Laapataa Ladies") <span class="px-2">|</span> Aayi Nai (From "Stree 2") <span class="px-2">|</span>
+                    Dwapara (From "Krishnam Pranaya Sakhi") <span class="px-2">|</span> Aasa Kooda <span
+                        class="px-2">|</span> Tainu Khabar Nahi <span class="px-2">|</span> Ve Kamleya (From "Rocky Aur
+                    Rani
+                    Kii Prem Kahaani") <span class="px-2">|</span> O Maahi (From "Dunki") <span class="px-2">|</span>
+                    Fear
+                    Song (From "Devara Part 1") [Telugu] <span class="px-2">|</span> Khoobsurat (From "Stree 2") <span
+                        class="px-2">|</span> Duur Na Karin (From "Khel Khel Mein")
+                </p>
+            </div>
+
+            <div class="text hover:underline">
+                <h3 class="text-lg font-bold mb-2">SONGS WITH LYRICS</h3>
+                <p class="text-xs text-gray-500">
+                    Coca Cola <span class="px-2">|</span> Bom Diggy Diggy <span class="px-2">|</span> Machayenge <span
+                        class="px-2">|</span> Tera Yaar Hoon Main <span class="px-2">|</span> Morni Banke <span
+                        class="px-2">|</span> Chalti Hai Kya 9 Se 12
+                </p>
+            </div>
+
+            <div class="text hover:underline">
+                <h3 class="text-lg font-bold mb-2">WYNK TOP HITS</h3>
+                <p class="text-xs text-gray-500">
+                    Top 20 Bollywood Songs <span class="px-2">|</span> Wynk Top 100 Songs <span class="px-2">|</span>
+                    Top 20
+                    English Songs <span class="px-2">|</span> Trending Reels Songs
+                </p>
+            </div>
+
+            <div class="text hover:underline">
+                <h3 class="text-lg font-bold mb-2">DEVOTIONAL SONGS</h3>
+                <p class="text-xs text-gray-500">
+                    Ganesh Ji Ki Aarti <span class="px-2">|</span> Laxmi Ji Ki Aarti <span class="px-2">|</span> Shri
+                    Hanuman Chalisa <span class="px-2">|</span> Shiv Bhajan <span class="px-2">|</span> Gurbani <span
+                        class="px-2">|</span> Gurbani Shabad <span class="px-2">|</span> Islamic Songs <span
+                        class="px-2">|</span> Jesus Songs <span class="px-2">|</span> Christian Songs
+                </p>
+            </div>
+
+            <div class="text hover:underline">
+                <h3 class="text-lg font-bold mb-2">JOIN WYNK FOR ARTISTS</h3>
+                <p class="text-xs text-gray-500">
+                    Wynk Studio <span class="px-2">|</span> Wynk Studio for Artists
+                </p>
+            </div>
+
+        </div>
+
+        <!--horizontal line-->
+        <div class="border-t border-gray-300 mt-2 w-5/6 mx-auto"></div>
+
+        <!--About and icons-->
+        <div
+            class="footer-bottom1 flex justify-between items-center mt-6 ml-15 mr-15 my-12 mx-4 md:mx-8 xl:mx-24 px-6 py-2">
+            <!-- Left Icons Section -->
+            <div class="right-text flex space-x-4 text-sm">
+                <div class="about hover:underline">
+                    <p>ABOUT US <span class="ml-2 text-gray-500">|</span></p>
+                </div>
+                <div class="about hover:underline">
+                    <p>PRIVACY POLICY <span class="ml-2 text-gray-500">|</span></p>
+                </div>
+                <div class="about hover:underline">
+                    <p>TERMS OF USE <span class="ml-2 text-gray-500">|</span></p>
+                </div>
+                <div class="about hover:underline">
+                    <p>CONTACT US <span class="ml-2 text-gray-500">|</span></p>
+                </div>
+                <div class="about hover:underline">
+                    <p>HELLOTUNES <span class="ml-2 text-gray-500">|</span></p>
+                </div>
+            </div>
+
+            <div class="left-icon flex space-x-4">
+                <div
+                    class="fb flex items-center justify-center w-8 h-8 border border-gray-300 rounded-full hover:bg-gray-400">
+                    <i class="fa-brands fa-facebook"></i>
+                </div>
+                <div
+                    class="tw flex items-center justify-center w-8 h-8 border border-gray-300 rounded-full hover:bg-gray-400">
+                    <i class="fa-brands fa-twitter"></i>
+                </div>
+                <div
+                    class="in flex items-center justify-center w-8 h-8 border border-gray-300 rounded-full hover:bg-gray-400">
+                    <i class="fa-brands fa-instagram"></i>
+                </div>
+                <div
+                    class="yt flex items-center justify-center w-8 h-8 border border-gray-300 rounded-full hover:bg-gray-400">
+                    <i class="fa-brands fa-youtube"></i>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Horizontal Line -->
+        <div class="border-t border-gray-300 mt-2 w-5/6 mx-auto"></div>
+
+        <!--last footer part-->
+        <div
+            class="footer-bottom2 flex justify-between items-center mt-6 ml-15 mr-15 my-12 mx-4 md:mx-8 xl:mx-24 px-6 py-2 ">
+            <div class="text1 w-2/3 flex flex-col text-xs text-gray-500">
+                Wynk Music is the one-stop music app for the latest to the greatest songs that you love. Play your
+                favourite
+                music online for free or download mp3.<br>
+                Enjoy from over 22 Million Hindi, English, Bollywood, Regional, Latest, Old songs and more.
+            </div>
+            <div class="text2 w-1/3 flex items-center justify-end text-xs text-gray-500">
+                <p>"2024 © All rights reserved <span class="mx-2 text-gray-500">|</span> Airtel Digital Limited</p>
+            </div>
+        </div>
+
+</body>
+
+</html>
